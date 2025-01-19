@@ -1,0 +1,6 @@
+venv
+build
+dist
+venv
+main.spec
+.git
