@@ -4,3 +4,5 @@ dist
 venv
 main.spec
 .git
+test.py
+__pycache__

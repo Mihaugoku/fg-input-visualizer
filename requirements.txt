@@ -1,4 +1,11 @@
+altgraph==0.17.4
 bindglobal==0.0.3
+packaging==24.2
+pefile==2023.2.7
 pillow==11.1.0
+pyinstaller==6.11.1
+pyinstaller-hooks-contrib==2025.0
 pynput==1.7.7
+pywin32-ctypes==0.2.3
+setuptools==75.8.0
 six==1.17.0

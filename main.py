@@ -7,18 +7,26 @@ import math
 from pynput.keyboard import Listener
 from PIL import Image, ImageTk, ImageDraw
 
-key_states = {
+import config_reader
+
+config = config_reader.read_config()
+
+k = config_reader.read_key_config()
+dir_config = k[0]
+key_config = k[1]
+combo_config = config_reader.read_combo_config()
+
+stick_positions = {
     "left": False,
     "right": False,
     "up": False,
-    "down": False,
-    "LP": False,
-    "MP": False,
-    "HP": False,
-    "LK": False,
-    "MK": False,
-    "HK": False
+    "down": False
 }
+
+key_states = {}
+
+for fg_key in key_config:
+    key_states[fg_key.keyname] = False
 
 line_trails = []
 
@@ -90,17 +98,17 @@ def create_line_trail(x1, y1, x2, y2, flip=None, **options):
 
 
 def redraw_stick_position():
-    global key_states, window, stick, coord_tuples, stick_radius, stick_position_index
+    global key_states, window, stick, coord_tuples, stick_radius, stick_position_index, stick_positions
 
     stick_pos = 4
 
-    if key_states["left"]:
+    if stick_positions["left"]:
         stick_pos -= 1
-    if key_states["right"]:
+    if stick_positions["right"]:
         stick_pos += 1
-    if key_states["up"]:
+    if stick_positions["up"]:
         stick_pos -= 3
-    if key_states["down"]:
+    if stick_positions["down"]:
         stick_pos += 3
 
     old_position = stick_position_index
@@ -117,65 +125,39 @@ def redraw_stick_position():
 
 
 def redraw_key_states():
-    global btn_images, window, key_states
+    global btn_image_objects, window, key_states
 
-    if key_states["LP"]:
-        window.itemconfig(btn_images[0], image=btn_image_assets_pressed[0])
-    else:
-        window.itemconfig(btn_images[0], image=btn_image_assets_unpressed[0])
-
-    if key_states["MP"]:
-        window.itemconfig(btn_images[1], image=btn_image_assets_pressed[1])
-    else:
-        window.itemconfig(btn_images[1], image=btn_image_assets_unpressed[1])
-
-    if key_states["HP"]:
-        window.itemconfig(btn_images[2], image=btn_image_assets_pressed[2])
-    else:
-        window.itemconfig(btn_images[2], image=btn_image_assets_unpressed[2])
-
-    if key_states["LK"]:
-        window.itemconfig(btn_images[3], image=btn_image_assets_pressed[3])
-    else:
-        window.itemconfig(btn_images[3], image=btn_image_assets_unpressed[3])
-
-    if key_states["MK"]:
-        window.itemconfig(btn_images[4], image=btn_image_assets_pressed[4])
-    else:
-        window.itemconfig(btn_images[4], image=btn_image_assets_unpressed[4])
-
-    if key_states["HK"]:
-        window.itemconfig(btn_images[5], image=btn_image_assets_pressed[5])
-    else:
-        window.itemconfig(btn_images[5], image=btn_image_assets_unpressed[5])
+    for fg_key in key_config:
+        if key_states[fg_key.keyname]:
+            window.itemconfig(btn_image_objects[fg_key.index], image=btn_image_assets_pressed[fg_key.index])
+        else:
+            window.itemconfig(btn_image_objects[fg_key.index], image=btn_image_assets_unpressed[fg_key.index])
 
 
 def check_key_press(key):
-    global key_states
+    global key_states, stick_positions
 
-    if str(key) == 'Key.left':
-        key_states["left"] = True
-    elif str(key) == 'Key.right':
-        key_states["right"] = True
-    elif str(key) == 'Key.up':
-        key_states["up"] = True
-    elif str(key) == 'Key.down':
-        key_states["down"] = True
+    key = str(key).replace("'", "")
+
+    if key == dir_config["left"]:
+        stick_positions["left"] = True
+    elif key == dir_config["right"]:
+        stick_positions["right"] = True
+    elif key == dir_config["up"]:
+        stick_positions["up"] = True
+    elif key == dir_config["down"]:
+        stick_positions["down"] = True
 
     redraw_stick_position()
 
-    if str(key) == "'a'":
-        key_states["LP"] = True
-    elif str(key) == "'s'":
-        key_states["MP"] = True
-    elif str(key) == "'d'":
-        key_states["HP"] = True
-    elif str(key) == "'z'":
-        key_states["LK"] = True
-    elif str(key) == "'x'":
-        key_states["MK"] = True
-    elif str(key) == "'c'":
-        key_states["HK"] = True
+    for combo_key in combo_config:
+        if key == combo_key.keycode:
+            for fg_key in combo_key.keynames:
+                key_states[fg_key] = True
+
+    for fg_key in key_config:
+        if key == f"{fg_key.keycode}":
+            key_states[fg_key.keyname] = True
 
     redraw_key_states()
 
@@ -183,29 +165,27 @@ def check_key_press(key):
 def check_key_release(key):
     global key_states
 
-    if str(key) == 'Key.left':
-        key_states["left"] = False
-    elif str(key) == 'Key.right':
-        key_states["right"] = False
-    elif str(key) == 'Key.up':
-        key_states["up"] = False
-    elif str(key) == 'Key.down':
-        key_states["down"] = False
+    key = str(key).replace("'", "")
+
+    if key == dir_config["left"]:
+        stick_positions["left"] = False
+    elif key == dir_config["right"]:
+        stick_positions["right"] = False
+    elif key == dir_config["up"]:
+        stick_positions["up"] = False
+    elif key == dir_config["down"]:
+        stick_positions["down"] = False
 
     redraw_stick_position()
 
-    if str(key) == "'a'":
-        key_states["LP"] = False
-    elif str(key) == "'s'":
-        key_states["MP"] = False
-    elif str(key) == "'d'":
-        key_states["HP"] = False
-    elif str(key) == "'z'":
-        key_states["LK"] = False
-    elif str(key) == "'x'":
-        key_states["MK"] = False
-    elif str(key) == "'c'":
-        key_states["HK"] = False
+    for combo_key in combo_config:
+        if key == combo_key.keycode:
+            for fg_key in combo_key.keynames:
+                key_states[fg_key] = False
+
+    for fg_key in key_config:
+        if key == f"{fg_key.keycode}":
+            key_states[fg_key.keyname] = False
 
     redraw_key_states()
 
@@ -213,27 +193,30 @@ def check_key_release(key):
 # Create window
 root = tk.Tk(screenName="Input Visualizer", baseName=None, className="Tk", useTk=True)
 
-btn_image_assets_unpressed, btn_image_assets_pressed, btn_images = [], [], []
-for i in range(6):
-    img = Image.open(f"assets/btn_{i}.png")
-    transparent_img = Image.open(f"assets/btn_{i}.png")
-    transparent_img.putalpha(128)
+# Create button images with unpressed ones being 50% opacity
+btn_image_assets_unpressed, btn_image_assets_pressed, btn_image_objects = [], [], []
+for fg_key in key_config:
+    img = Image.open(fg_key.asset)
+    transparent_img = Image.open(fg_key.asset)
+    transparent_img2 = transparent_img.copy()
+    transparent_img2.putalpha(128)
+    transparent_img.paste(transparent_img2, transparent_img)
     btn_image_assets_unpressed.append(ImageTk.PhotoImage(transparent_img))
     btn_image_assets_pressed.append(ImageTk.PhotoImage(img))
 
 # Set window dimensions
-window_width = 400
-window_height = 180
+window_width = config["window_size"][0]
+window_height = config["window_size"][1]
 root.geometry(f"{window_width}x{window_height}")
 
 # Create main canvas
-window = tk.Canvas(root, width=window_width, height=window_height, highlightthickness=0, bg="#000000")
+window = tk.Canvas(root, width=window_width, height=window_height, highlightthickness=0, bg=config["background"])
 window.pack()
 
 # Draw an octagon of radius 50, where origin is in center
-pol_xorig = window_height / 2
-pol_yorig = window_height / 2
-pol_rad = 70
+pol_xorig = config['stick_position'][0]
+pol_yorig = config['stick_position'][1]
+pol_rad = int(config["stick_radius"])
 
 # Octagon coordinates start from the UP position, traveling clockwise
 polygon_coords = [
@@ -271,11 +254,11 @@ listener.wait()
 
 # Set up starting buttons and positions
 stick_position_index = 4
-
 redraw_stick_position()
 
-for x in range(6):
-    btn_images.append(window.create_image(pol_xorig * 2 + 30 + 64 * (x % 3), pol_yorig - 32 + 64 * (x // 3), image=btn_image_assets_unpressed[x], anchor="c"))
+# Create action buttons from config instead
+for fg_key in key_config:
+    btn_image_objects.append(window.create_image(fg_key.x, fg_key.y, image=btn_image_assets_unpressed[fg_key.index], anchor="c"))
 
 # Set up window dragging without a border
 lastx, lasty = 0, 0
@@ -301,11 +284,12 @@ def move_window(event):
 window.bind("<ButtonPress-1>", start_move)
 window.bind('<B1-Motion>', move_window)
 
-# Make the window borderless
+# Make the window borderless and chromakeyed on Windows
 root.overrideredirect(True)
 root.attributes("-topmost", True)
 root.attributes("-alpha", 0.95)
-root.wm_attributes("-transparentcolor", "black")
+if config['chromakey'] != '0':
+    root.wm_attributes("-transparentcolor", config["background"])
 
 # Set up trail updates for moving the stick around
 root.after(100, update_line_trails)
@@ -313,5 +297,5 @@ root.after(100, update_line_trails)
 # Run mainloop
 root.mainloop()
 
-# Stop global key listener
+# Stop global key listener when shutting program down
 listener.stop()
