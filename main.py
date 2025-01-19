@@ -115,6 +115,7 @@ def redraw_stick_position():
     stick_position_index = stick_pos
     window.moveto(stick, coord_tuples[stick_pos][0] - stick_radius, coord_tuples[stick_pos][1] - stick_radius)
 
+    # Fix some weird trail flipping BS that i didn't feel like doing properly
     if stick_pos != old_position:
         flip = None
         if (stick_pos == 0 and old_position == 1) or (stick_pos == 1 and old_position == 0) or (stick_pos == 7 and old_position == 8) or (stick_pos == 8 and old_position == 7):
@@ -213,12 +214,11 @@ root.geometry(f"{window_width}x{window_height}")
 window = tk.Canvas(root, width=window_width, height=window_height, highlightthickness=0, bg=config["background"])
 window.pack()
 
-# Draw an octagon of radius 50, where origin is in center
+# Draw arcade stick octagon, with coordinates starting from the UP position, traveling clockwise
 pol_xorig = config['stick_position'][0]
 pol_yorig = config['stick_position'][1]
 pol_rad = int(config["stick_radius"])
 
-# Octagon coordinates start from the UP position, traveling clockwise
 polygon_coords = [
     pol_xorig + math.cos(math.degrees(45)) * pol_rad, pol_yorig - math.sin(math.degrees(45)) * pol_rad,
     pol_xorig, pol_yorig - pol_rad,
@@ -245,10 +245,9 @@ stick_imgtk = ImageTk.PhotoImage(stick_img)
 stick = window.create_image(pol_xorig, pol_yorig, image=stick_imgtk, anchor="c")
 window.tag_raise(stick)
 
-# Test - listen for key input, then draw some text on the canvas
+# Start global key listener
 listener = Listener(on_press=check_key_press, on_release=check_key_release)
 
-# Start global key listener
 listener.start()
 listener.wait()
 
@@ -281,20 +280,20 @@ def move_window(event):
     lasty = event.y_root
 
 
+# Let the user drag the window
 window.bind("<ButtonPress-1>", start_move)
 window.bind('<B1-Motion>', move_window)
 
-# Make the window borderless and chromakeyed on Windows
+# Make the window borderless, always on top and chromakeyed on Windows
 root.overrideredirect(True)
 root.attributes("-topmost", True)
-root.attributes("-alpha", 0.95)
+root.attributes("-alpha", config["opacity"])
 if config['chromakey'] != '0':
     root.wm_attributes("-transparentcolor", config["background"])
 
 # Set up trail updates for moving the stick around
 root.after(100, update_line_trails)
 
-# Run mainloop
 root.mainloop()
 
 # Stop global key listener when shutting program down

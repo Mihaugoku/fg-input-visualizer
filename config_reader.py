@@ -148,12 +148,13 @@ def read_key_config():
 
 def read_combo_config():
     combo_keys = []
-    for key, value in config[f"combokeys.{config_game}"].items():
-        split_keys = value.split(',')
-        for k in split_keys:
-            if k not in game_keys:
-                err(f'Key "{k}" is not bound in [overlay.{config_game}] keynames.')
+    if f"combokeys.{config_game}" in config:
+        for key, value in config[f"combokeys.{config_game}"].items():
+            split_keys = value.split(',')
+            for k in split_keys:
+                if k not in game_keys:
+                    err(f'Key "{k}" is not bound in [overlay.{config_game}] keynames.')
 
-        combo_keys.append(ComboKey(key, split_keys))
+            combo_keys.append(ComboKey(key, split_keys))
 
     return combo_keys
