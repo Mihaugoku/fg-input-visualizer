@@ -4,24 +4,20 @@ import re
 
 
 def err(message: str):
-    print(f"Error: {message}")
+    print(f"ERROR\nError: {message}")
     exit(1)
 
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-if 'game' not in config['config'] or config['config']['game'] == '':
-    err('No game found in [config].')
+# Get list of games in config
+config_games = []
+for section_name in config.sections():
+    if section_name.startswith('overlay.'):
+        config_games.append(section_name[8:])
 
-config_game = config['config']['game']
-print(f'Using game {config_game}')
-
-if 'keynames' not in config[f'overlay.{config_game}']:
-    err('No keynames found in [overlay.{config_game}].')
-
-game_keys = config[f'overlay.{config_game}']['keynames'].split(',')
-
+config_game = None
 key_index = 0
 
 
@@ -92,6 +88,13 @@ def read_config():
 
 
 def read_key_config():
+    global key_index, config_game
+    key_index = 0
+    game_keys = config[f'overlay.{config_game}']['keynames'].split(',')
+
+    if 'keynames' not in config[f'overlay.{config_game}']:
+        err('No keynames found in [overlay.{config_game}].')
+
     keyconfig = []
 
     # Directional key config
@@ -147,10 +150,15 @@ def read_key_config():
 
 
 def read_combo_config():
+    global config_game
+    game_keys = config[f'overlay.{config_game}']['keynames'].split(',')
+
     combo_keys = []
     if f"combokeys.{config_game}" in config:
         for key, value in config[f"combokeys.{config_game}"].items():
             split_keys = value.split(',')
+            # Fix for special keys being turned lowercase
+            key = key.replace("key", "Key")
             for k in split_keys:
                 if k not in game_keys:
                     err(f'Key "{k}" is not bound in [overlay.{config_game}] keynames.')
@@ -158,3 +166,42 @@ def read_combo_config():
             combo_keys.append(ComboKey(key, split_keys))
 
     return combo_keys
+
+
+def validate_configs():
+    global config_game
+
+    print(f'Found {len(config_games)} games in config: {", ".join(config_games)}')
+
+    for game in config_games:
+        print(f'Checking {game} config...', end=' ')
+        config_game = game
+        read_key_config()
+        read_combo_config()
+        print('OK')
+
+
+def select_game():
+    game_selected = ""
+    lastgame = ""
+    if "lastusedgame" in config["config"] and config["config"]["lastusedgame"] in config_games and config["config"]["lastusedgame"] != "":
+        lastgame = config["config"]["lastusedgame"]
+    while game_selected not in config_games:
+        if lastgame == "":
+            game_selected = input("Select a game: ").strip()
+        else:
+            game_selected = input(f"Select a game (Default: {lastgame}): ").strip()
+        if game_selected == "":
+            game_selected = lastgame
+
+    # Save last used game and write to file while preserving comments
+    f = open('config.ini', 'r')
+    content = f.read()
+    f.close()
+    content = re.sub(r'lastusedgame=.*', f"lastusedgame={game_selected}", content)
+    f = open('config.ini', 'w')
+    f.write(content)
+    f.close()
+
+    print(f"Using game: {game_selected}")
+    return game_selected

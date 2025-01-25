@@ -17,13 +17,12 @@ Dragging is available, and configuration is encouraged.
 Program configuration is done in the `config.ini` file. INI files follow a "[Section], key=value" structure. The file's content is as follows:
 
 `[config]` - This is where main config variables are stored.  
-`game` - Set which game's config to use. There are a few pre-made configs, but you can make your own.  
-`backgroundcolor` - The window's background color. Only used, if `chromakey` is 0. This value is a hex color code. Use any online color picker to pick a color. (Default "#000000" (black))  
+`backgroundcolor` - The window's background color. Only used, if `chromakey` is 0. This value is a hex color code. Use any online color picker to pick a color. When using colors other than black, it is recommended to set `opacity` to 1 and chromakey to 0. (Default "#000000" (black))  
+`opacity` - Opacity of the window, separate from chroma-key, with 0 meaning invisible, 1 being fully opaque. (Default: 0.85)  
 `chromakey` - Whether window background should be transparent. Use 1 to do it automatically, or if you don't want it, or would like to do it yourself, use 0.  
 `windowsize` - Size of the overlay window in "width,height" in pixels. (Default: 400,180)  
 `stickpos` - Position in "width,height" of the arcade stick visualizing directional input. (Default: 90,90)  
 `stickradius` - Radius of the arcade stick in pixels. (Default: 70)  
-`opacity` - Opacity of the window, separate from chroma-key, with 0 meaning invisible, 1 being fully opaque. (Default: 0.85)  
 
 `[keyconfig]` - This is where you will set your global mappings for things like directional input. Note that some key values in input fields will have the prefix "Key.". Visit the lower "Input" section to find out more about that.
 

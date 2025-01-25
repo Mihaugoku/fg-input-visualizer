@@ -5,9 +5,12 @@ import tkinter as tk
 import math
 
 from pynput.keyboard import Listener
-from PIL import Image, ImageTk, ImageDraw
+from PIL import Image, ImageTk, ImageDraw, ImageEnhance
 
 import config_reader
+
+config_reader.validate_configs()
+config_reader.config_game = config_reader.select_game()
 
 config = config_reader.read_config()
 
@@ -29,6 +32,9 @@ for fg_key in key_config:
     key_states[fg_key.keyname] = False
 
 line_trails = []
+
+if config["chromakey"] != "0":
+    config["background"] = "#000000"
 
 
 def update_line_trails():
@@ -198,11 +204,12 @@ root = tk.Tk(screenName="Input Visualizer", baseName=None, className="Tk", useTk
 btn_image_assets_unpressed, btn_image_assets_pressed, btn_image_objects = [], [], []
 for fg_key in key_config:
     img = Image.open(fg_key.asset)
-    transparent_img = Image.open(fg_key.asset)
-    transparent_img2 = transparent_img.copy()
-    transparent_img2.putalpha(128)
-    transparent_img.paste(transparent_img2, transparent_img)
-    btn_image_assets_unpressed.append(ImageTk.PhotoImage(transparent_img))
+    unpressed_img = Image.open(fg_key.asset)
+    # unpressed_img2 = .copy()
+    # unpressed_img2.brightness
+    # transparent_img.paste(transparent_img2, transparent_img)
+    unpressed_img = ImageEnhance.Brightness(unpressed_img).enhance(0.33)
+    btn_image_assets_unpressed.append(ImageTk.PhotoImage(unpressed_img))
     btn_image_assets_pressed.append(ImageTk.PhotoImage(img))
 
 # Set window dimensions
@@ -236,7 +243,7 @@ for i in range(len(coord_order)):
     coord_tuples.append((polygon_coords[coord_order[i] * 2], polygon_coords[coord_order[i] * 2 + 1]))
 coord_tuples.insert(4, (pol_xorig, pol_yorig))
 
-octagon = window.create_polygon(polygon_coords, outline="#ffffff", width=3)
+octagon = window.create_polygon(polygon_coords, outline="#ffffff", fill=config["background"], width=3)
 
 # Draw a circle at the center. This will be used to track directional keys like an arcade stick
 stick_radius = 20
@@ -259,7 +266,7 @@ redraw_stick_position()
 for fg_key in key_config:
     btn_image_objects.append(window.create_image(fg_key.x, fg_key.y, image=btn_image_assets_unpressed[fg_key.index], anchor="c"))
 
-# Set up window dragging without a border
+# Set up window dragging without a title bar
 lastx, lasty = 0, 0
 
 
