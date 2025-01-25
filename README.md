@@ -7,6 +7,9 @@ DISCLAIMER: This program is very much still work-in-progress. It doesn't support
 ## Usage
 
 Make sure you have Python installed on your computer. As this is an interpreted, and not compiled language, you need to install the interpreter first.
+
+Install missing dependencies with `pip install -r requirements.txt`
+
 Open `run.bat` to run the program. It should hopefully open an empty terminal window. Any errors will be propelled there. You should also see a default Street Fighter 6 overlay.
 
 To dispose of the program, simply close the terminal window, or ALT-F4 the focused overlay.
