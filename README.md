@@ -49,15 +49,15 @@ Example:
 `lp=j` - The light punch is mapped to "J"
 
 > [!NOTE]
-> Please note that the feature below has only been tested on a generic XBox gamepad. If you have a different pad/arcade stick/hitbox/whatever, and it's not working as intended, get in contact with me at https://discord.gg/sZ9eJDKURe
+> Please note that the feature below has only been tested on a generic XBox gamepad. If you have a different pad/arcade stick/hitbox/whatever, and it's not working as intended, get in contact with me at https://discord.gg/sZ9eJDKURe  
 `[joyconfig.game]` - Button config for gamepads & stuff.
 
 Gamepad buttons:
-face_1 - A (XBox), Cross (PS)
-face_2 - B (XBox), Circle (PS)
-face_3 - X (XBox), Square (PS)
-face_4 - Y (XBox), Cross (PS)
-The rest should be self-explanatory
+face_1 - A (XBox), Cross (PS)  
+face_2 - B (XBox), Circle (PS)  
+face_3 - X (XBox), Square (PS)  
+face_4 - Y (XBox), Cross (PS)  
+The rest should be self-explanatory  
 
 > [!NOTE]
 > If you are unsure what the name for the input you're mapping is, run `test.bat`, which will open an input tester for you. You can then press any button, and it will give you the name of it.
