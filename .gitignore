@@ -1,8 +1,8 @@
 venv
 build
 dist
-venv
 main.spec
 .git
-test.py
+# test.py
 __pycache__
+drawingtest.py

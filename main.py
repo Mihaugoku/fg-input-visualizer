@@ -8,6 +8,8 @@ from pynput.keyboard import Listener
 from PIL import Image, ImageTk, ImageDraw, ImageEnhance
 
 import config_reader
+import gamepad_reader
+import threading
 
 config_reader.validate_configs()
 config_reader.config_game = config_reader.select_game()
@@ -17,6 +19,7 @@ config = config_reader.read_config()
 k = config_reader.read_key_config()
 dir_config = k[0]
 key_config = k[1]
+input_mode = k[2]
 combo_config = config_reader.read_combo_config()
 
 stick_positions = {
@@ -253,10 +256,14 @@ stick = window.create_image(pol_xorig, pol_yorig, image=stick_imgtk, anchor="c")
 window.tag_raise(stick)
 
 # Start global key listener
-listener = Listener(on_press=check_key_press, on_release=check_key_release)
+if input_mode == "keyboard":
+    listener = Listener(on_press=check_key_press, on_release=check_key_release)
 
-listener.start()
-listener.wait()
+    listener.start()
+    listener.wait()
+elif input_mode == "gamepad":
+    gamepad_thread = threading.Thread(target=gamepad_reader.gamepad_main, daemon=True)
+    gamepad_thread.start()
 
 # Set up starting buttons and positions
 stick_position_index = 4
@@ -304,4 +311,5 @@ root.after(100, update_line_trails)
 root.mainloop()
 
 # Stop global key listener when shutting program down
-listener.stop()
+if input_mode == "keyboard":
+    listener.stop()

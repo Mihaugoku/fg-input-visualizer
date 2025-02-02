@@ -4,7 +4,7 @@ import re
 
 
 def err(message: str):
-    print(f"ERROR\nError: {message}")
+    print(f"ERROR\nError: {message}\n{7 + len(message) * '='}\n")
     exit(1)
 
 
@@ -61,6 +61,7 @@ def read_config():
     general_config['chromakey'] = set_config_value('config', 'chromakey', '1')
     general_config['opacity'] = set_config_value('config', 'opacity', '0.95')
     general_config['stick_radius'] = set_config_value('config', 'stickradius', '70')
+    general_config['joystick_threshold'] = set_config_value('config', 'joystickthreshold', '0.5')
 
     stick_position = set_config_value('config', 'stickpos', '90,90').split(',')
     for i in range(len(stick_position)):
@@ -90,10 +91,11 @@ def read_config():
 def read_key_config():
     global key_index, config_game
     key_index = 0
-    game_keys = config[f'overlay.{config_game}']['keynames'].split(',')
 
     if 'keynames' not in config[f'overlay.{config_game}']:
         err('No keynames found in [overlay.{config_game}].')
+
+    game_keys = config[f'overlay.{config_game}']['keynames'].split(',')
 
     keyconfig = []
 
@@ -137,16 +139,26 @@ def read_key_config():
         if not os.path.exists(asset_path):
             err(f'Sprite asset for "{key}" does not exist.')
 
-        if key not in config[f'keyconfig.{config_game}']:
-            err(f'Key "{key}" is not bound in [keyconfig.{config_game}].')
+        if "mode" not in config[f'overlay.{config_game}'] or config[f'overlay.{config_game}']['mode'] not in ("keyboard", "gamepad"):
+            err(f'No input mode/wrong mode in [overlay.{config_game}] add either mode="keyboard" or "gamepad".')
 
-        key_code = config[f'keyconfig.{config_game}'][key]
+        mode = config[f'overlay.{config_game}']['mode']
+
+        if mode == "keyboard":
+            if key not in config[f'keyconfig.{config_game}']:
+                err(f'Key "{key}" is not bound in [keyconfig.{config_game}].')
+
+            key_code = config[f'keyconfig.{config_game}'][key]
+        elif mode == "gamepad":
+            if key not in config[f'joyconfig.{config_game}']:
+                err(f'Button "{key}" is not bound in [joyconfig.{config_game}].')
+
+            key_code = config[f'joyconfig.{config_game}'][key]
 
         key_obj = FGKey(key, key_code, asset_path, x, y)
-
         keyconfig.append(key_obj)
 
-    return [dirconfig, keyconfig]
+    return [dirconfig, keyconfig, mode]
 
 
 def read_combo_config():
@@ -154,16 +166,28 @@ def read_combo_config():
     game_keys = config[f'overlay.{config_game}']['keynames'].split(',')
 
     combo_keys = []
-    if f"combokeys.{config_game}" in config:
-        for key, value in config[f"combokeys.{config_game}"].items():
-            split_keys = value.split(',')
-            # Fix for special keys being turned lowercase
-            key = key.replace("key", "Key")
-            for k in split_keys:
-                if k not in game_keys:
-                    err(f'Key "{k}" is not bound in [overlay.{config_game}] keynames.')
+    mode = config[f'overlay.{config_game}']['mode']
 
-            combo_keys.append(ComboKey(key, split_keys))
+    if mode == "keyboard":
+        if f"combokeys.{config_game}" in config:
+            for key, value in config[f"combokeys.{config_game}"].items():
+                split_keys = value.split(',')
+                # Fix for special keys being turned lowercase
+                key = key.replace("key", "Key")
+                for k in split_keys:
+                    if k not in game_keys:
+                        err(f'Key "{k}" is not bound in [overlay.{config_game}] keynames.')
+
+                combo_keys.append(ComboKey(key, split_keys))
+    elif mode == "gamepad":
+        if f"joycombokeys.{config_game}" in config:
+            for key, value in config[f"joycombokeys.{config_game}"].items():
+                split_keys = value.split(',')
+                for k in split_keys:
+                    if k not in game_keys:
+                        err(f'Key "{k}" is not bound in [overlay.{config_game}] keynames.')
+
+                combo_keys.append(ComboKey(key, split_keys))
 
     return combo_keys
 
@@ -171,6 +195,8 @@ def read_combo_config():
 def validate_configs():
     global config_game
 
+    validating_str = "Validating game configs..."
+    print(f"{'=' * len(validating_str)}\n{validating_str}\n")
     print(f'Found {len(config_games)} games in config: {", ".join(config_games)}')
 
     for game in config_games:
@@ -179,6 +205,9 @@ def validate_configs():
         read_key_config()
         read_combo_config()
         print('OK')
+
+    finished_str = "Finished config validation!"
+    print(f"\n{finished_str}\n{'=' * len(finished_str)}")
 
 
 def select_game():
