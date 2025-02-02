@@ -9,6 +9,7 @@ DISCLAIMER: This program is very much still work-in-progress. It doesn't support
 Make sure you have Python installed on your computer. As this is an interpreted, and not compiled language, you need to install the interpreter first.
 
 Once you install Python, install the required dependencies with `pip install -r requirements.txt`. There's a few libraries that are required to read keyboard input and draw the overlay.
+If you have trouble installing or don't know what to do, just run `pip install pillow pynput`. These are the only libraries required.
 
 ## Usage
 

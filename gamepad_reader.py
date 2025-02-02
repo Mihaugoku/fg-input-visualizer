@@ -14,7 +14,7 @@ for id in range(num):
         ret, startinfo = joystickapi.joyGetPosEx(id)
         break
 else:
-    no_gamepad = "No gamepad was detected. If the game is set to gamepad mode, connect one first and restart this program."
+    no_gamepad = "No gamepad detected. If the game is set to gamepad mode, connect one and restart this program, or set config to keyboard."
     print(f"{'=' * len(no_gamepad)}\n{no_gamepad}\n{'=' * len(no_gamepad)}\n")
 
 axis_states = [["axis_x", 0], ["axis_y", 0], ["axis_z", 0]]
