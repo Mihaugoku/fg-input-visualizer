@@ -4,7 +4,7 @@ import re
 
 
 def err(message: str):
-    print(f"ERROR\nError: {message}\n{7 + len(message) * '='}\n")
+    print(f"ERROR\nError: {message}\n{(7 + len(message)) * '='}\n")
     exit(1)
 
 
@@ -150,6 +150,8 @@ def read_key_config():
 
             key_code = config[f'keyconfig.{config_game}'][key]
         elif mode == "gamepad":
+            if f"joyconfig.{config_game}" not in config:
+                err(f'No [joyconfig.{config_game}] found in config file.')
             if key not in config[f'joyconfig.{config_game}']:
                 err(f'Button "{key}" is not bound in [joyconfig.{config_game}].')
 
