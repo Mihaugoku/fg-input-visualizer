@@ -50,9 +50,10 @@ Example:
 
 > [!NOTE]
 > Please note that the feature below has only been tested on a generic XBox gamepad. If you have a different pad/arcade stick/hitbox/whatever, and it's not working as intended, get in contact with me at https://discord.gg/sZ9eJDKURe  
+
 `[joyconfig.game]` - Button config for gamepads & stuff.
 
-Gamepad buttons:
+Gamepad buttons:  
 face_1 - A (XBox), Cross (PS)  
 face_2 - B (XBox), Circle (PS)  
 face_3 - X (XBox), Square (PS)  
