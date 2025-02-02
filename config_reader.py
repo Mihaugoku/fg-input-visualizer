@@ -62,6 +62,7 @@ def read_config():
     general_config['opacity'] = set_config_value('config', 'opacity', '0.95')
     general_config['stick_radius'] = set_config_value('config', 'stickradius', '70')
     general_config['joystick_threshold'] = set_config_value('config', 'joystickthreshold', '0.5')
+    general_config['window_position'] = set_config_value('config', 'windowpos', '0,0')
 
     stick_position = set_config_value('config', 'stickpos', '90,90').split(',')
     for i in range(len(stick_position)):

@@ -3,13 +3,16 @@
 
 import tkinter as tk
 import math
+import threading
+import signal
+import sys
+import re
 
 from pynput.keyboard import Listener
 from PIL import Image, ImageTk, ImageDraw, ImageEnhance
 
 import config_reader
 import gamepad_reader
-import threading
 
 config_reader.validate_configs()
 config_reader.config_game = config_reader.select_game()
@@ -38,6 +41,30 @@ line_trails = []
 
 if config["chromakey"] != "0":
     config["background"] = "#000000"
+
+
+def altf4_handler():
+    exit_handler(signal.SIGINT, 0)
+
+
+def exit_handler(sig, frame):
+    print("Closing overlay...")
+    cfg = open("config.ini", "r")
+    cfg_content = cfg.read()
+    cfg.close()
+    cfg_content = re.sub(r"windowpos=.*", f"windowpos={root.winfo_x()},{root.winfo_y()}", cfg_content)
+    cfg = open("config.ini", "w")
+    cfg.write(cfg_content)
+    cfg.close()
+    try:
+        root.destroy()
+    except tk.TclError:
+        print("Main window has been closed.")
+        pass
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, exit_handler)
 
 
 def update_line_trails():
@@ -216,9 +243,13 @@ for fg_key in key_config:
     btn_image_assets_pressed.append(ImageTk.PhotoImage(img))
 
 # Set window dimensions
+windowpos = config["window_position"].split(",")
+windowx = windowpos[0]
+windowy = windowpos[1]
+
 window_width = config["window_size"][0]
 window_height = config["window_size"][1]
-root.geometry(f"{window_width}x{window_height}")
+root.geometry(f"{window_width}x{window_height}+{windowx}+{windowy}")
 
 # Create main canvas
 window = tk.Canvas(root, width=window_width, height=window_height, highlightthickness=0, bg=config["background"])
@@ -308,7 +339,10 @@ if config['chromakey'] != '0':
 # Set up trail updates for moving the stick around
 root.after(100, update_line_trails)
 
+root.protocol("WM_DELETE_WINDOW", altf4_handler)
+
 root.mainloop()
+
 
 # Stop global key listener when shutting program down
 if input_mode == "keyboard":

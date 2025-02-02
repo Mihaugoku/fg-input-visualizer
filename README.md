@@ -33,6 +33,7 @@ Program configuration is done in the `config.ini` file. INI files follow a "[Sec
 Example from Street Fighter 6:
 ```
 [overlay.sf6]
+mode=keyboard
 keynames=lp,mp,hp,lk,mk,hk 
 ```
 The 6 buttons used in Street Fighter, named accordingly.
@@ -44,6 +45,17 @@ Example:
 `lp=j` - The light punch is mapped to "J"
 
 > [!NOTE]
+> Please note that the feature below has only been tested on a generic gamepad. If you have a different pad/arcade stick/hitbox/whatever, and it's not working, get in contact with me at https://discord.gg/sZ9eJDKURe
+`[joyconfig.game]` - Button config for gamepads & stuff.
+
+Gamepad buttons:
+face_1 - A (XBox), Cross (PS)
+face_2 - B (XBox), Circle (PS)
+face_3 - X (XBox), Square (PS)
+face_4 - Y (XBox), Cross (PS)
+The rest should be self-explanatory
+
+> [!NOTE]
 > If you are unsure what the name for the input you're mapping is, run `test.bat`, which will open an input tester for you. You can then press any button, and it will give you the name of it.
 
 `[combokeys.game]` - Combo keys simulate you pressing multiple other buttons at the same time. For example how you can bind throws to a single button. The syntax is as follows: "keycode=keyname1,keyname2,..."  
@@ -53,3 +65,5 @@ Example:
 ## Issues
 
 As i've said, this is a work-in-progress. If you find any bugs, please report them. You may raise a Github issue, contact me on Discord, or if you want, create a pull request.
+
+I do understand that there will be issues with the program. Please, feel free to report them to me, i'll make sure to do my best to fix them ASAP.
