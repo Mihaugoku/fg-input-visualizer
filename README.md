@@ -4,11 +4,13 @@ A simple overlay tool for visualizing your input in a fighting game.
 
 DISCLAIMER: This program is very much still work-in-progress. It doesn't support many very important features, for example gamepad input. I will get to it some day.
 
-## Usage
+## Installation
 
 Make sure you have Python installed on your computer. As this is an interpreted, and not compiled language, you need to install the interpreter first.
 
-Install missing dependencies with `pip install -r requirements.txt`
+Once you install Python, install the required dependencies with `pip install -r requirements.txt`. There's a few libraries that are required to read keyboard input and draw the overlay.
+
+## Usage
 
 Open `run.bat` to run the program. It should hopefully open an empty terminal window. Any errors will be propelled there. You should also see a default Street Fighter 6 overlay.
 
@@ -30,6 +32,7 @@ Program configuration is done in the `config.ini` file. INI files follow a "[Sec
 `[keyconfig]` - This is where you will set your global mappings for things like directional input. Note that some key values in input fields will have the prefix "Key.". Visit the lower "Input" section to find out more about that.
 
 `[overlay.game]` - In this section you will specify your names for buttons. They can be anything you want, and these names will be used later to configure things like sprites, bindings and even combo-keys.  
+`mode` can be either "keyboard" or "gamepad".
 Example from Street Fighter 6:
 ```
 [overlay.sf6]
@@ -45,7 +48,7 @@ Example:
 `lp=j` - The light punch is mapped to "J"
 
 > [!NOTE]
-> Please note that the feature below has only been tested on a generic gamepad. If you have a different pad/arcade stick/hitbox/whatever, and it's not working, get in contact with me at https://discord.gg/sZ9eJDKURe
+> Please note that the feature below has only been tested on a generic XBox gamepad. If you have a different pad/arcade stick/hitbox/whatever, and it's not working as intended, get in contact with me at https://discord.gg/sZ9eJDKURe
 `[joyconfig.game]` - Button config for gamepads & stuff.
 
 Gamepad buttons:
