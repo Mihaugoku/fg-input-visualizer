@@ -24,7 +24,7 @@ def check_for_updates():
     update_str = ""
 
     if local_hash[1] != remote_hash:
-        update_str = f"A new version is available! {local_hash[0][:7]} -> {remote_hash[:7]}\nGo to https://github.com/Mihaugoku/fg-input-visualizer to download."
+        update_str = f"A new version is available! {local_hash[1][:7]} -> {remote_hash[:7]}\nGo to https://github.com/Mihaugoku/fg-input-visualizer to download."
         update_len = max([len(x) for x in update_str.split('\n')])
     else:
         update_str = "You are up to date."
