@@ -31,19 +31,18 @@ dp_dir = -1
 stop_event = threading.Event()
 
 
-def find_gamepad():
-    num = joystickapi.joyGetNumDevs()
-    ret, caps, startinfo = False, None, None
-    for id in range(num):
-        ret, caps = joystickapi.joyGetDevCaps(id)
-        if ret:
-            gamepad_str = f"Gamepad detected: {caps.szPname}"
-            print(f"{'=' * len(gamepad_str)}\n{gamepad_str}\n{'=' * len(gamepad_str)}\n")
-            ret, startinfo = joystickapi.joyGetPosEx(id)
-            break
-    else:
-        no_gamepad = "No gamepad detected. If the game is set to gamepad mode, connect one and restart this program, or set config to keyboard."
-        print(f"{'=' * len(no_gamepad)}\n{no_gamepad}\n{'=' * len(no_gamepad)}\n")
+num = joystickapi.joyGetNumDevs()
+ret, caps, startinfo = False, None, None
+for id in range(num):
+    ret, caps = joystickapi.joyGetDevCaps(id)
+    if ret:
+        gamepad_str = f"Gamepad detected: {caps.szPname}"
+        print(f"{'=' * len(gamepad_str)}\n{gamepad_str}\n{'=' * len(gamepad_str)}\n")
+        ret, startinfo = joystickapi.joyGetPosEx(id)
+        break
+else:
+    no_gamepad = "No gamepad detected. If the game is set to gamepad mode, connect one and restart this program, or set config to keyboard."
+    print(f"{'=' * len(no_gamepad)}\n{no_gamepad}\n{'=' * len(no_gamepad)}\n")
 
 
 def set_joystick_threshold(threshold):
