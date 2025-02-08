@@ -17,8 +17,6 @@ from modules import update_checker
 
 update_checker.check_for_updates()
 
-gamepad_reader.find_gamepad()
-
 config_reader.validate_configs()
 config_reader.config_game = config_reader.select_game()
 
