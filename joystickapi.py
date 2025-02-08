@@ -1,3 +1,5 @@
+# Code sourced from: https://stackoverflow.com/questions/60309652/how-to-get-usb-controller-gamepad-to-work-with-python
+
 import ctypes
 
 winmmdll = ctypes.WinDLL("winmm.dll")

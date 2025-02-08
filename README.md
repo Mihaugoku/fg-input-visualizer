@@ -70,5 +70,3 @@ Example:
 ## Issues
 
 As i've said, this is a work-in-progress. If you find any bugs, please report them. You may raise a Github issue, contact me on Discord, or if you want, create a pull request.
-
-I do understand that there will be issues with the program. Please, feel free to report them to me, i'll make sure to do my best to fix them ASAP.

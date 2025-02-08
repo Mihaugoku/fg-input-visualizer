@@ -1,5 +1,6 @@
 import joystickapi
 import time
+import threading
 
 num = joystickapi.joyGetNumDevs()
 ret, caps, startinfo = False, None, None
@@ -43,9 +44,12 @@ vdir = 0
 dp_dir = -1
 
 
+stop_event = threading.Event()
+
+
 def gamepad_tester_main():
     global pov, hdir, vdir, dp_dir
-    while True:
+    while not stop_event.is_set():
         time.sleep(0.005)
         # if msvcrt.kbhit() and msvcrt.getch() == chr(27).encode():  # detect ESC
         #     run = False

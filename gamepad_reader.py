@@ -1,8 +1,7 @@
 import joystickapi
-# import msvcrt
 import time
+import threading
 import __main__
-
 
 num = joystickapi.joyGetNumDevs()
 ret, caps, startinfo = False, None, None
@@ -20,7 +19,6 @@ else:
 axis_states = [["axis_x", 0], ["axis_y", 0], ["axis_z", 0]]
 rotation_states = [["rotation_y", 0], ["rotation_x", 0], ["rotation_z", 0]]
 
-# Button order: cross, circle, square, triangle, L1, R1, select, start, L3, R3
 button_states = [
     ["face_1", False],
     ["face_2", False],
@@ -36,19 +34,24 @@ button_states = [
     ["button_r2", False]
 ]
 
-# joystick_threshold = __main__.config["joystick_threshold"] * 32768
-joystick_threshold = 0.5 * 32768
+joystick_threshold = 0
 
 pov = 65535
-# Left, Up, Right, Down
 hdir = 0
 vdir = 0
 dp_dir = -1
 
+stop_event = threading.Event()
+
+
+def set_joystick_threshold(threshold):
+    global joystick_threshold
+    joystick_threshold = min(1, max(0, threshold)) * 32768
+
 
 def gamepad_main():
     global pov, hdir, vdir, dp_dir
-    while True:
+    while not stop_event.is_set():
         time.sleep(0.005)
         # if msvcrt.kbhit() and msvcrt.getch() == chr(27).encode():  # detect ESC
         #     run = False

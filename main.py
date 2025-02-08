@@ -18,6 +18,7 @@ config_reader.validate_configs()
 config_reader.config_game = config_reader.select_game()
 
 config = config_reader.read_config()
+gamepad_reader.set_joystick_threshold(float(config["joystick_threshold"]))
 
 k = config_reader.read_key_config()
 dir_config = k[0]
@@ -39,15 +40,13 @@ for fg_key in key_config:
 
 line_trails = []
 
-if config["chromakey"] != "0":
-    config["background"] = "#000000"
-
 
 def altf4_handler():
     exit_handler(signal.SIGINT, 0)
 
 
 def exit_handler(sig, frame):
+    # Save window position into config without removing comments
     print("Closing overlay...")
     cfg = open("config.ini", "r")
     cfg_content = cfg.read()
@@ -64,13 +63,10 @@ def exit_handler(sig, frame):
     sys.exit(0)
 
 
-signal.signal(signal.SIGINT, exit_handler)
-
-
 def update_line_trails():
     global line_trails, window
 
-    alpha_interval = 24
+    alpha_interval = 17
 
     for i in range(len(line_trails)):
         img = ImageTk.getimage(line_trails[i][0]).convert("RGBA")
@@ -87,7 +83,7 @@ def update_line_trails():
             window.delete(line_trails[i][1])
             line_trails.pop(i)
 
-    root.after(17, update_line_trails)
+    root.after(alpha_interval, update_line_trails)
 
 
 def create_line_trail(x1, y1, x2, y2, flip=None, **options):
@@ -227,28 +223,45 @@ def check_key_release(key):
     redraw_key_states()
 
 
-# Create window
+def start_move(event):
+    global lastx, lasty
+    lastx = event.x_root
+    lasty = event.y_root
+
+
+def move_window(event):
+    global lastx, lasty
+    deltax = event.x_root - lastx
+    deltay = event.y_root - lasty
+    x = root.winfo_x() + deltax
+    y = root.winfo_y() + deltay
+    root.geometry("+%s+%s" % (x, y))
+    lastx = event.x_root
+    lasty = event.y_root
+
+
+if config["chromakey"] != "0":
+    config["background"] = "#000000"
+
 root = tk.Tk(screenName="Input Visualizer", baseName=None, className="Tk", useTk=True)
 
-# Create button images with unpressed ones being 50% opacity
+signal.signal(signal.SIGINT, exit_handler)
+
 btn_image_assets_unpressed, btn_image_assets_pressed, btn_image_objects = [], [], []
+
 for fg_key in key_config:
     img = Image.open(fg_key.asset)
     unpressed_img = Image.open(fg_key.asset)
-    # unpressed_img2 = .copy()
-    # unpressed_img2.brightness
-    # transparent_img.paste(transparent_img2, transparent_img)
     unpressed_img = ImageEnhance.Brightness(unpressed_img).enhance(0.33)
     btn_image_assets_unpressed.append(ImageTk.PhotoImage(unpressed_img))
     btn_image_assets_pressed.append(ImageTk.PhotoImage(img))
 
-# Set window dimensions
 windowpos = config["window_position"].split(",")
 windowx = windowpos[0]
 windowy = windowpos[1]
-
 window_width = config["window_size"][0]
 window_height = config["window_size"][1]
+
 root.geometry(f"{window_width}x{window_height}+{windowx}+{windowy}")
 
 # Create main canvas
@@ -273,15 +286,16 @@ polygon_coords = [
 
 coord_tuples = []
 coord_order = [0, 1, 2, 7, 3, 6, 5, 4]
+
 for i in range(len(coord_order)):
     coord_tuples.append((polygon_coords[coord_order[i] * 2], polygon_coords[coord_order[i] * 2 + 1]))
+
 coord_tuples.insert(4, (pol_xorig, pol_yorig))
 
 octagon = window.create_polygon(polygon_coords, outline="#ffffff", fill=config["background"], width=3)
 
-# Draw a circle at the center. This will be used to track directional keys like an arcade stick
-stick_radius = 20
 stick_img = Image.open("assets/btn_stick.png")
+stick_radius = (stick_img.width + stick_img.height / 2) // 2
 stick_imgtk = ImageTk.PhotoImage(stick_img)
 stick = window.create_image(pol_xorig, pol_yorig, image=stick_imgtk, anchor="c")
 window.tag_raise(stick)
@@ -289,14 +303,12 @@ window.tag_raise(stick)
 # Start global key listener
 if input_mode == "keyboard":
     listener = Listener(on_press=check_key_press, on_release=check_key_release)
-
     listener.start()
     listener.wait()
 elif input_mode == "gamepad":
     gamepad_thread = threading.Thread(target=gamepad_reader.gamepad_main, daemon=True)
     gamepad_thread.start()
 
-# Set up starting buttons and positions
 stick_position_index = 4
 redraw_stick_position()
 
@@ -307,25 +319,6 @@ for fg_key in key_config:
 # Set up window dragging without a title bar
 lastx, lasty = 0, 0
 
-
-def start_move(event):
-    global lastx, lasty
-    lastx = event.x_root
-    lasty = event.y_root
-
-
-def move_window(event):
-    global lastx, lasty
-    deltax = event.x_root - lastx
-    deltay = event.y_root - lasty
-    x = root.winfo_x() + deltax
-    y = root.winfo_y() + deltay
-    root.geometry("+%s+%s" % (x, y))
-    lastx = event.x_root
-    lasty = event.y_root
-
-
-# Let the user drag the window
 window.bind("<ButtonPress-1>", start_move)
 window.bind('<B1-Motion>', move_window)
 
@@ -333,17 +326,18 @@ window.bind('<B1-Motion>', move_window)
 root.overrideredirect(True)
 root.attributes("-topmost", True)
 root.attributes("-alpha", config["opacity"])
+
 if config['chromakey'] != '0':
     root.wm_attributes("-transparentcolor", config["background"])
 
 # Set up trail updates for moving the stick around
 root.after(100, update_line_trails)
-
 root.protocol("WM_DELETE_WINDOW", altf4_handler)
-
 root.mainloop()
-
 
 # Stop global key listener when shutting program down
 if input_mode == "keyboard":
     listener.stop()
+else:
+    gamepad_reader.stop_event.set()
+    gamepad_thread.join()

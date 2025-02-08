@@ -2,12 +2,6 @@ import configparser
 import os
 import re
 
-
-def err(message: str):
-    print(f"ERROR\nError: {message}\n{(7 + len(message)) * '='}\n")
-    exit(1)
-
-
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -44,6 +38,11 @@ class ComboKey():
 
     def __str__(self):
         return f"{self.keycode}: {self.keynames}"
+
+
+def err(message: str):
+    print(f"ERROR\nError: {message}\n{(7 + len(message)) * '='}\n")
+    exit(1)
 
 
 def set_config_value(config_part, val, fallback):
