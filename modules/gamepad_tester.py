@@ -1,6 +1,7 @@
-import joystickapi
 import time
 import threading
+
+from modules import joystickapi
 
 num = joystickapi.joyGetNumDevs()
 ret, caps, startinfo = False, None, None
