@@ -58,7 +58,7 @@ face_4 - Y (XBox)
 The rest should be self-explanatory  
 
 > [!NOTE]
-> If you are unsure what the name for the input you're mapping is, run `test.bat`, which will open an input tester for you. You can then press any button, and it will give you the name of it.
+> If you are unsure what the name for the input you're mapping is, run `input_tester.py`, which will open an input tester for you. You can then press any button, and it will give you the name of it.
 
 `[combokeys.game]` - Combo keys simulate you pressing multiple other buttons at the same time. For example how you can bind throws to a single button. The syntax is as follows: "keycode=keyname1,keyname2,..."  
 Example:  
