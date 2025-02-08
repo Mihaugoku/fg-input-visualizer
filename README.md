@@ -2,21 +2,17 @@
 
 A simple overlay tool for visualizing your input in a fighting game.
 
-DISCLAIMER: This program is very much still work-in-progress. It doesn't support many very important features, for example gamepad input. I will get to it some day.
+# DISCLAIMER: This program is very much still work-in-progress. It hasn't been tested on numerous software, including PlayStation controllers and leverless controllers. Please, feel free to provide input with those devices, and also with popular games i don't own to create an actually good default config!
 
 ## Installation
 
 Make sure you have Python installed on your computer. As this is an interpreted, and not compiled language, you need to install the interpreter first.
 
-Once you install Python, install the required dependencies with `pip install -r requirements.txt`. There's a few libraries that are required to read keyboard input and draw the overlay.
-If you have trouble installing or don't know what to do, just run `pip install pillow pynput`. These are the only libraries required.
+Once you install Python, install the required dependencies with `pip install -r requirements.txt`, or simply run `setup.bat`.
 
 ## Usage
 
-Open `run.bat` to run the program. It should hopefully open an empty terminal window. Any errors will be propelled there. You should also see a default Street Fighter 6 overlay.
-
-To dispose of the program, simply close the terminal window, or ALT-F4 the focused overlay.
-Dragging is available, and configuration is encouraged.
+Open `main.py` to run the program. It should hopefully open an empty terminal window. Any errors will be propelled there. You should also see a default Street Fighter 6 overlay.
 
 ## Configuration
 
@@ -26,14 +22,15 @@ Program configuration is done in the `config.ini` file. INI files follow a "[Sec
 `backgroundcolor` - The window's background color. Only used, if `chromakey` is 0. This value is a hex color code. Use any online color picker to pick a color. When using colors other than black, it is recommended to set `opacity` to 1 and chromakey to 0. (Default "#000000" (black))  
 `opacity` - Opacity of the window, separate from chroma-key, with 0 meaning invisible, 1 being fully opaque. (Default: 0.85)  
 `chromakey` - Whether window background should be transparent. Use 1 to do it automatically, or if you don't want it, or would like to do it yourself, use 0.  
-`windowsize` - Size of the overlay window in "width,height" in pixels. (Default: 400,180)  
-`stickpos` - Position in "width,height" of the arcade stick visualizing directional input. (Default: 90,90)  
+`windowsize` - Size of the overlay window in "width,height" in pixels.  
+`stickpos` - Position in "width,height" of the arcade stick visualizing directional input.  
 `stickradius` - Radius of the arcade stick in pixels. (Default: 70)  
+`joystickthreshold` - How far you have to move the joystick before it registers a new input (from 0 to 1).  
 
-`[keyconfig]` - This is where you will set your global mappings for things like directional input. Note that some key values in input fields will have the prefix "Key.". Visit the lower "Input" section to find out more about that.
+`[keyconfig]` - This is where you will set your global mappings for things like directional input. Note that some key values in input fields will have the prefix "Key.". Visit the lower "Input" section to find out more about that.  
 
 `[overlay.game]` - In this section you will specify your names for buttons. They can be anything you want, and these names will be used later to configure things like sprites, bindings and even combo-keys.  
-`mode` can be either "keyboard" or "gamepad".
+`mode` can be either "keyboard" or "gamepad".  
 Example from Street Fighter 6:
 ```
 [overlay.sf6]
