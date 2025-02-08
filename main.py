@@ -11,8 +11,8 @@ import re
 from pynput.keyboard import Listener
 from PIL import Image, ImageTk, ImageDraw, ImageEnhance
 
-import config_reader
-import gamepad_reader
+from modules import config_reader
+from modules import gamepad_reader
 
 config_reader.validate_configs()
 config_reader.config_game = config_reader.select_game()

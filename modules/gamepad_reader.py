@@ -1,4 +1,4 @@
-import joystickapi
+from modules import joystickapi
 import time
 import threading
 import __main__

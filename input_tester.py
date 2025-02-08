@@ -1,7 +1,8 @@
+import threading
+
 from pynput.keyboard import Listener
 
-import gamepad_tester
-import threading
+from modules import gamepad_tester
 
 
 def check_key_press(key):
