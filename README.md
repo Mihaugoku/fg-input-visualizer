@@ -2,7 +2,7 @@
 
 A simple overlay tool for visualizing your input in a fighting game.
 
-# DISCLAIMER: This program is very much still work-in-progress. It hasn't been tested on numerous software, including PlayStation controllers and leverless controllers. Please, feel free to provide input with those devices, and also with popular games i don't own to create an actually good default config!
+## DISCLAIMER: This program is very much still work-in-progress. It hasn't been tested on numerous software, including PlayStation controllers and leverless controllers. Please, feel free to provide input with those devices, and also with popular games i don't own to create an actually good default config!
 
 ## Installation
 
@@ -51,10 +51,10 @@ Example:
 `[joyconfig.game]` - Button config for gamepads & stuff.
 
 Gamepad buttons:  
-face_1 - A (XBox), Cross (PS)  
-face_2 - B (XBox), Circle (PS)  
-face_3 - X (XBox), Square (PS)  
-face_4 - Y (XBox), Cross (PS)  
+face_1 - A (XBox)  
+face_2 - B (XBox)  
+face_3 - X (XBox)  
+face_4 - Y (XBox)  
 The rest should be self-explanatory  
 
 > [!NOTE]
