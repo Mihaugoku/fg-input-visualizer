@@ -295,7 +295,7 @@ coord_tuples.insert(4, (pol_xorig, pol_yorig))
 octagon = window.create_polygon(polygon_coords, outline="#ffffff", fill=config["background"], width=3)
 
 stick_img = Image.open("assets/btn_stick.png")
-stick_radius = (stick_img.width + stick_img.height / 2) // 2
+stick_radius = ((stick_img.width + stick_img.height) / 2) // 2
 stick_imgtk = ImageTk.PhotoImage(stick_img)
 stick = window.create_image(pol_xorig, pol_yorig, image=stick_imgtk, anchor="c")
 window.tag_raise(stick)
